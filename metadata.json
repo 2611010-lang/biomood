@@ -1,0 +1,6 @@
+{
+  "name": "Student Stress & Lifestyle Tracker",
+  "description": "A comprehensive tracking and AI-powered analysis tool for students to log emotions and biological habits, providing physiological science-based stress management feedback.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

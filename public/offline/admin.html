@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전문 상담 교사 대시보드 (Admin Portal)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-indigo-50/20 text-slate-800 min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-indigo-100 py-4 px-6 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2.5">
+                <span class="p-2 bg-indigo-600 text-white rounded-xl text-xl font-bold">🎓</span>
+                <div>
+                    <h1 class="text-sm font-bold text-slate-900 tracking-tight">수험생 생체 항상성 종합 모니터 장비 (상담교사용)</h1>
+                    <p class="text-[10px] text-slate-400">Professional Counselor Supervision Monitor</p>
+                </div>
+            </div>
+            <nav class="flex gap-2">
+                <a href="index.html" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-medium transition-all">일지 관리 센터</a>
+                <a href="letter.html" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-medium transition-all">치료 위로 편지실</a>
+                <a href="admin.html" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold shadow-xs">종합 모니터(상담교사용)</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto py-8 px-4 sm:px-6 space-y-8">
+        
+        <!-- Summary cards metrics -->
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-6">
+            <div class="bg-white p-5 rounded-2xl border border-indigo-50 shadow-xs flex items-center gap-4">
+                <div class="w-11 h-11 bg-indigo-100 text-indigo-700 flex items-center justify-center text-xl rounded-xl">📅</div>
+                <div>
+                    <h3 class="text-xs text-slate-400 font-bold uppercase">총 모니터 기록 수</h3>
+                    <p id="statTotalLogs" class="text-xl font-extrabold text-slate-800 font-mono">0일</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-indigo-50 shadow-xs flex items-center gap-4">
+                <div class="w-11 h-11 bg-rose-100 text-rose-700 flex items-center justify-center text-xl rounded-xl">⚡</div>
+                <div>
+                    <h3 class="text-xs text-slate-400 font-bold uppercase">평균 스트레스 점수</h3>
+                    <p id="statAvgStress" class="text-xl font-extrabold text-slate-800 font-mono">0.0 / 10</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-indigo-50 shadow-xs flex items-center gap-4">
+                <div class="w-11 h-11 bg-sky-100 text-sky-700 flex items-center justify-center text-xl rounded-xl">😴</div>
+                <div>
+                    <h3 class="text-xs text-slate-400 font-bold uppercase">수험생 평균 취침</h3>
+                    <p id="statAvgSleep" class="text-xl font-extrabold text-slate-800 font-mono">0.0 시간</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-indigo-50 shadow-xs flex items-center gap-4">
+                <div class="w-11 h-11 bg-amber-100 text-amber-700 flex items-center justify-center text-xl rounded-xl">☕</div>
+                <div>
+                    <h3 class="text-xs text-slate-400 font-bold uppercase">평균 카페인 로드</h3>
+                    <p id="statAvgCaffeine" class="text-xl font-extrabold text-slate-800 font-mono">0.0 잔</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left 2 columns: Student records list -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <h3 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                            <i data-lucide="shield-alert" class="text-indigo-600 w-5 h-5"></i> 수렴된 누적 원시 데이터 (Student Raw Ledger)
+                        </h3>
+                        <button id="btnClearAll" class="text-xs font-semibold text-rose-600 hover:text-rose-800 flex items-center gap-1 cursor-pointer">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> 전체 데이터 초기화
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-400 font-bold border-b border-slate-100">
+                                    <th class="p-3">날짜</th>
+                                    <th class="p-3">스트레스 (1-10)</th>
+                                    <th class="p-3">불안/우울</th>
+                                    <th class="p-3">아침식사</th>
+                                    <th class="p-3">수면/운동</th>
+                                    <th class="p-3">카페인</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminTableBody" class="divide-y divide-slate-100 font-medium">
+                                <!-- Filled by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right 1 column: Counselor diagnostic alerts -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Warning Alerts based on biological thresholds -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-1.5 border-b border-slate-100 pb-3">
+                        <i data-lucide="alert-triangle" class="text-amber-500 w-4 h-4"></i> 실시간 임상적 과부하 경보
+                    </h3>
+                    <div class="space-y-3" id="adminAlertsBox">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+
+                <!-- Custom instructions from Counselor -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-1.5 border-b border-slate-100 pb-3">
+                        <i data-lucide="message-square" class="text-indigo-600 w-4 h-4"></i> 상담 조언 매뉴얼 (교사 커스텀)
+                    </h3>
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        상담 학생에게 주지할 주치의 지침입니다. 수면 유도 멜라토닌 증진 수칙 등을 학생 편지 지표에 연동합니다.
+                    </p>
+                    <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-150 text-xs text-slate-600 space-y-1">
+                        <p class="font-bold text-slate-700">📌 권고 세라토닌 자극법</p>
+                        <p>수면 결손 시상하부-하수체 위성을 이완하기 위해 매일 25분 전신 발목 걷기 및 조식에 포도당(쌀엿, 통밀)을 주입 권장.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase compatibility SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSy-REPLACE-WITH-YOUR-KEY",
+            authDomain: "your-project.firebaseapp.com",
+            databaseURL: "https://your-project-default-rtdb.firebaseio.com",
+            projectId: "your-project",
+            storageBucket: "your-project.appspot.com",
+            messagingSenderId: "000000000000",
+            appId: "1:000000000000:web:0000000000000000"
+        };
+
+        let db;
+        try {
+            if (firebaseConfig.apiKey.includes("REPLACE-WITH-YOUR-KEY") || !firebaseConfig.databaseURL) {
+                db = null;
+            } else {
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.database();
+            }
+        } catch (e) {
+            db = null;
+        }
+
+        // Fetch logs
+        function getSavedRecords() {
+            if (db) {
+                return new Promise((resolve) => {
+                    db.ref("student_logs").once("value", (snap) => {
+                        const val = snap.val();
+                        if (!val) resolve([]);
+                        const list = Object.keys(val).map(key => ({ id: key, ...val[key] }));
+                        resolve(list);
+                    });
+                });
+            } else {
+                const logs = JSON.parse(localStorage.getItem("offline_student_logs") || "[]");
+                return Promise.resolve(logs);
+            }
+        }
+
+        // Clear all entries
+        document.getElementById("btnClearAll").addEventListener("click", async () => {
+            if (!confirm("정말 모든 학생 기록을 완선 철회 초기화 하시겠습니까? 복구할 수 없습니다.")) return;
+
+            if (db) {
+                await db.ref("student_logs").remove();
+            } else {
+                localStorage.removeItem("offline_student_logs");
+            }
+            alert("전체 데이터가 소거되었습니다.");
+            loadDashboard();
+        });
+
+        // Load stats & table
+        async function loadDashboard() {
+            const list = await getSavedRecords();
+            const sorted = list.sort((a,b) => b.date.localeCompare(a.date));
+
+            // Set Stats
+            document.getElementById("statTotalLogs").textContent = `${list.length}일`;
+
+            let sumStress = 0, sumSleep = 0, sumCaffeine = 0;
+            list.forEach(log => {
+                sumStress += log.stressScore;
+                sumSleep += log.sleepHours;
+                sumCaffeine += log.caffeineCups;
+            });
+
+            const avgStress = list.length > 0 ? (sumStress / list.length).toFixed(1) : "0.0";
+            const avgSleep = list.length > 0 ? (sumSleep / list.length).toFixed(1) : "0.0";
+            const avgCaffeine = list.length > 0 ? (sumCaffeine / list.length).toFixed(1) : "0.0";
+
+            document.getElementById("statAvgStress").textContent = `${avgStress} / 10`;
+            document.getElementById("statAvgSleep").textContent = `${avgSleep} 시간`;
+            document.getElementById("statAvgCaffeine").textContent = `${avgCaffeine} 잔`;
+
+            // Fill Table
+            const tbody = document.getElementById("adminTableBody");
+            tbody.innerHTML = "";
+
+            if (sorted.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400 font-medium">축적 데이터가 없습니다. 학생 포털에 기입해 주세요.</td></tr>`;
+            } else {
+                sorted.forEach(log => {
+                    const row = document.createElement("tr");
+                    row.className = "hover:bg-slate-50 transition-colors";
+                    
+                    const mealStr = log.meals.breakfast ? "O" : "X";
+                    
+                    row.innerHTML = `
+                        <td class="p-3 font-mono text-slate-600">${log.date}</td>
+                        <td class="p-3 font-bold text-rose-600">${log.stressScore} / 10</td>
+                        <td class="p-3 text-slate-500">불안:${log.anxietyScore} | 우울:${log.depressionScore}</td>
+                        <td class="p-3 text-slate-500">조식:${mealStr}</td>
+                        <td class="p-3 text-slate-500 font-mono">${log.sleepHours}h / ${log.exerciseMinutes}m</td>
+                        <td class="p-3 text-slate-500 font-mono">${log.caffeineCups}잔</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+
+            // Generate alarms
+            const alertsBox = document.getElementById("adminAlertsBox");
+            alertsBox.innerHTML = "";
+            let alertCount = 0;
+
+            sorted.slice(0, 5).forEach(log => {
+                if (log.sleepHours < 6) {
+                    const alt = document.createElement("div");
+                    alt.className = "p-3 bg-red-50 text-red-900 border border-red-150 rounded-xl text-xs space-y-1";
+                    alt.innerHTML = `
+                        <div class="font-bold flex items-center gap-1">⏰ 위험 수면 부채 검출 (${log.date})</div>
+                        <p class="text-slate-600 font-medium">${log.sleepHours}시간 취침 - 시상하부 시냅스 저하로 과도한 불안장애 및 스트레스 대행 유입 경보.</p>
+                    `;
+                    alertsBox.appendChild(alt);
+                    alertCount++;
+                }
+                if (log.caffeineCups >= 3) {
+                    const alt = document.createElement("div");
+                    alt.className = "p-3 bg-amber-50 text-amber-950 border border-amber-150 rounded-xl text-xs space-y-1";
+                    alt.innerHTML = `
+                        <div class="font-bold flex items-center gap-1">⚠️ 고카페인 각성 흥분 부하 (${log.date})</div>
+                        <p class="text-slate-600 font-medium">아데노신 수용체 강제 차단. 심박 충동수 증가로 인한 과호흡, 수능 패닉 노이즈 증가 우려.</p>
+                    `;
+                    alertsBox.appendChild(alt);
+                    alertCount++;
+                }
+            });
+
+            if (alertCount === 0) {
+                alertsBox.innerHTML = `
+                    <div class="p-4 bg-emerald-50 text-emerald-800 border border-emerald-100 rounded-xl text-xs text-center font-bold">
+                        🎉 현재 임상적 이상 변이가 검출되지 않았습니다. 학생의 항상성 상태가 안정지대 내부에 있습니다.
+                    </div>
+                `;
+            }
+        }
+
+        loadDashboard();
+        lucide.createIcons();
+    </script>
+</body>
+</html>

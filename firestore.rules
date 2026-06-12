@@ -1,0 +1,60 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+    
+    // Global Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+    
+    // DailyLog schema validator (Pillar 2: Anti-Update-Gap)
+    function isValidDailyLog(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.date is string && data.date.size() == 10
+        && data.stressScore is int && data.stressScore >= 0 && data.stressScore <= 10
+        && data.anxietyScore is int && data.anxietyScore >= 0 && data.anxietyScore <= 10
+        && data.happinessScore is int && data.happinessScore >= 0 && data.happinessScore <= 10
+        && data.depressionScore is int && data.depressionScore >= 0 && data.depressionScore <= 10
+        && data.sleepHours is number && data.sleepHours >= 0.0 && data.sleepHours <= 24.0
+        && data.exerciseMinutes is int && data.exerciseMinutes >= 0 && data.exerciseMinutes <= 1440
+        && data.caffeineCups is int && data.caffeineCups >= 0 && data.caffeineCups <= 100
+        && data.userId is string && data.userId.size() <= 128
+        && (request.auth.uid == data.userId);
+    }
+    
+    // FutureLetter schema validator
+    function isValidFutureLetter(data) {
+      return data.id is string && data.id.size() <= 128
+        && data.author is string && data.author.size() <= 64
+        && data.content is string && data.content.size() <= 2000
+        && data.category is string && (data.category == 'counselor' || data.category == 'peer' || data.category == 'self')
+        && data.createdAt is string && data.createdAt.size() == 10;
+    }
+
+    match /daily_logs/{logId} {
+      // Prevent ID poisoning (Pillar 3)
+      allow get: if isSignedIn() && resource.data.userId == request.auth.uid && isValidId(logId);
+      // Secure list query enforcement (Pillar 8)
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      
+      allow create: if isSignedIn() && isValidId(logId) && isValidDailyLog(request.resource.data);
+      allow update: if isSignedIn() && isValidId(logId) && isValidDailyLog(request.resource.data) && resource.data.userId == request.auth.uid && request.resource.data.userId == resource.data.userId;
+      allow delete: if isSignedIn() && isValidId(logId) && resource.data.userId == request.auth.uid;
+    }
+    
+    match /letters/{letterId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(letterId) && isValidFutureLetter(request.resource.data);
+      allow delete: if isSignedIn() && isValidId(letterId) && resource.data.userId == request.auth.uid;
+    }
+  }
+}

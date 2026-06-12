@@ -1,0 +1,48 @@
+{
+  "entities": {
+    "DailyLog": {
+      "title": "DailyLog",
+      "description": "Daily emotion tracker and bio-lifestyle log for students",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "date": { "type": "string" },
+        "stressScore": { "type": "integer" },
+        "anxietyScore": { "type": "integer" },
+        "happinessScore": { "type": "integer" },
+        "depressionScore": { "type": "integer" },
+        "journal": { "type": "string" },
+        "sleepHours": { "type": "number" },
+        "exerciseMinutes": { "type": "number" },
+        "meals": { "type": "object" },
+        "caffeineCups": { "type": "integer" },
+        "userId": { "type": "string" }
+      },
+      "required": ["id", "date", "stressScore", "anxietyScore", "happinessScore", "depressionScore", "sleepHours", "exerciseMinutes", "caffeineCups", "userId"]
+    },
+    "FutureLetter": {
+      "title": "FutureLetter",
+      "description": "An encouragement letter recorded by a student, counsellor, or peer",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "author": { "type": "string" },
+        "content": { "type": "string" },
+        "category": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "userId": { "type": "string" }
+      },
+      "required": ["id", "author", "content", "category", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/daily_logs/{logId}": {
+      "schema": "DailyLog",
+      "description": "Collection of daily mental and biological health tracking logs"
+    },
+    "/letters/{letterId}": {
+      "schema": "FutureLetter",
+      "description": "Collection of peer-to-peer and self-encouragement letters"
+    }
+  }
+}
